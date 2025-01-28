@@ -1,0 +1,52 @@
+.welcomeStepMain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFFFFF;
+  gap: 24px;
+  border-radius: 24px;
+  padding: 35px;
+}
+
+.welcomeStepTitle {
+  color: #353535;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.welcomeStepContent {
+  color: #64748B;
+  font-size: 20px;
+  font-weight: 400;
+  max-width: 400px;
+  text-align: center;
+}
+
+.welcomeStepFooter {
+  margin-top: 25px;
+  color: #64748B;
+}
+
+@media (max-width: 768px) {
+  .welcomeStepMain {
+    height: auto;
+    gap: 16px;
+    padding: 40px;
+
+  }
+
+  .welcomeStepTitle {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .welcomeStepContent {
+    font-size: 16px;
+    max-width: 90%;
+  }
+
+  .welcomeStepFooter {
+    font-size: 10px;
+  }
+}
