@@ -33,7 +33,10 @@ export default function Company() {
         <Button
           variant="contained"
           onClick={handleAddCompany}
-          sx={{ backgroundColor: '#CB90FF' }}
+          sx={{
+            backgroundColor: '#CB90FF',
+            fontWeight: '600'
+          }}
         >
           Cadastrar
         </Button>
