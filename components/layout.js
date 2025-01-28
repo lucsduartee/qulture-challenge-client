@@ -41,9 +41,9 @@ export default function Layout({ children }) {
 
   const drawer = (
     <div>
-      <Toolbar sx={{ backgroundColor: '#CB90FF', display: 'flex', justifyContent: 'center' }}>
+      <Toolbar sx={{ backgroundColor: '#CB90FF', display: 'flex', justifyContent: 'space-around' }}>
         <Image
-          src="/download.png"
+          src="/download.svg"
           alt="Qulture Rocks Logo"
           width={60}
           height={10}
