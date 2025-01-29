@@ -59,7 +59,6 @@ export default function Company() {
         company: data,
       },
     })
-
   }
 
   return (

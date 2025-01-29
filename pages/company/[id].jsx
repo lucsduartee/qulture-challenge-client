@@ -6,6 +6,12 @@ import { useRouter } from 'next/router';
 
 export default function CompanyDetails() {
   const [employees, setEmployees] = React.useState([])
+  const [employee, setEmployee] = React.useState()
+  const [peers, setPeers] = React.useState([])
+  const [subordinates, setSubordinates] = React.useState([])
+  const [deepSubordinates, setDeepSubordinates] = React.useState([])
+
+
   const router = useRouter()
 
   const { selectedCompany } = React.useContext(CompaniesContext)
@@ -52,24 +58,34 @@ export default function CompanyDetails() {
     }
   };
 
+  const handleViewMoreAboutEmployee = async (employee) => {
+    (async function fetchEmployeesInfos() {
+      const [peersResponse, subordinatesResponse, deepSubordinatesResponse] = await Promise.all([
+        fetch(`${process.env.NEXT_PUBLIC_QULTURE_API_HOST}/api/employees/${employee.id}/peers`, {
+          method: 'GET',
+        }),
+        fetch(`${process.env.NEXT_PUBLIC_QULTURE_API_HOST}/api/employees/${employee.id}/subordinates`, {
+          method: 'GET',
+        }),
+        fetch(`${process.env.NEXT_PUBLIC_QULTURE_API_HOST}/api/employees/${employee.id}/deep_subordinates`, {
+          method: 'GET',
+        })
+      ]);
+
+      const peersData = await peersResponse.json()
+      const subordinatesData = await subordinatesResponse.json()
+      const deepSubordinatesData = await deepSubordinatesResponse.json()
+
+      setPeers(peersData)
+      setSubordinates(subordinatesData)
+      setDeepSubordinates(deepSubordinatesData)
+      setEmployee(employee)
+    })();
+  }
+
   const getManager = (employeeId) => {
     const employee = employees.find(emp => emp.id === employeeId);
     return employees.find(emp => emp.id === employee?.manager_id) || null;
-  };
-
-  const getPeers = (employeeId) => {
-    const manager = getManager(employeeId);
-    return employees.filter(emp => emp.manager_id === manager?.id && emp.id !== employeeId);
-  };
-
-  const getDirectReports = (employeeId) => {
-    console.log('getDirectReports', employeeId)
-    return employees.filter(emp => emp.manager_id === employeeId);
-  };
-
-  const getSecondLevelReports = (employeeId) => {
-    const directReports = getDirectReports(employeeId);
-    return directReports.flatMap(emp => getDirectReports(emp.id));
   };
 
   return (
@@ -93,12 +109,17 @@ export default function CompanyDetails() {
                   <Typography variant="h6" align="center">{employee.name}</Typography>
                   <Typography variant="body2" color="textSecondary" align="center">{employee.email}</Typography>
                   <Button
-                    variant="outlined"
                     color="error"
                     sx={{ mt: 2 }}
                     onClick={() => handleDeleteEmployee(employee.id)}
                   >
                     Deletar Colaborador
+                  </Button>
+                  <Button
+                    sx={{ mt: 2, ml: 2, color: '#CB90FF' }}
+                    onClick={() => handleViewMoreAboutEmployee(employee)}
+                  >
+                    Ver mais detalhes
                   </Button>
                 </CardContent>
               </Card>
@@ -107,56 +128,65 @@ export default function CompanyDetails() {
         </Grid>
       </Box>
 
-      <Box>
-        <Typography variant="h6" gutterBottom>Líderes</Typography>
-        {employees.filter(emp => emp.manager_id === null).map(manager => (
-          <Card key={manager.id} sx={{ mb: 2 }}>
-            <CardContent>
-              <Typography variant="h6">{manager.name}</Typography>
-              <Typography><b>Liderados Diretos:</b></Typography>
-              <Box>
-                <List>
-                  {getDirectReports(manager.id).map(direct => (
-                    <ListItem key={direct.id} sx={{ border: '1px solid #ddd', borderRadius: 2, mb: 1 }}>{direct.name}</ListItem>
-                  ))}
-                </List>
-              </Box>
-              <Typography><b>Liderados de Segundo Nível:</b></Typography>
-              <Box>
-                <List>
-                  {getSecondLevelReports(manager.id).map(secondLevel => {
-                    const secondLevelManager = getManager(secondLevel.id);
-                    return (
-                      <ListItem key={secondLevel.id} sx={{ border: '1px solid #ddd', borderRadius: 2, mb: 1 }}>
-                        {secondLevel.name} (Manager: {secondLevelManager?.name || 'N/A'})
-                      </ListItem>
-                    );
-                  })}
-                </List>
-              </Box>
-            </CardContent>
-          </Card>
-        ))}
-      </Box>
+      {
+        employee && (
+          <Box>
+            <Box>
+              <Card sx={{ mb: 2 }}>
+                <CardContent>
+                  <Typography variant="h6">{employee.name}</Typography>
+                  {subordinates.length !== 0 && <>
+                    <Typography><b>Liderados Diretos:</b></Typography>
+                    <Box>
+                      <List>
+                        {subordinates?.map(subordinate => (
+                          <ListItem key={subordinate.id} sx={{ border: '1px solid #ddd', borderRadius: 2, mb: 1 }}>{subordinate.name}</ListItem>
+                        ))}
+                      </List>
+                    </Box></>
+                  }
+                  {
+                    deepSubordinates.length !== 0 && <>
+                      <Typography><b>Liderados de Segundo Nível:</b></Typography>
+                      <Box>
+                        <List>
+                          {deepSubordinates.map(secondLevel => {
+                            const secondLevelManager = getManager(secondLevel.id);
+                            return (
+                              <ListItem key={secondLevel.id} sx={{ border: '1px solid #ddd', borderRadius: 2, mb: 1 }}>
+                                {secondLevel.name} (Manager: {secondLevelManager?.name || 'N/A'})
+                              </ListItem>
+                            );
+                          })}
+                        </List>
+                      </Box>
+                    </>
+                  }
+                </CardContent>
+              </Card>
+            </Box>
 
-      <Box>
-        <Typography variant="h6">Pares de Colaboradores</Typography>
-        {employees.filter(emp => getPeers(emp.id).length > 0).map(emp => (
-          <Card key={emp.id} sx={{ mb: 2 }}>
-            <CardContent>
-              <Typography variant="h6">{emp.name}</Typography>
-              <Typography><b>Pares:</b></Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {getPeers(emp.id).map(peer => (
-                  <Box key={peer.id} sx={{ border: '1px solid #ddd', borderRadius: 2, p: 1, width: '100%' }}>
-                    {peer.name}
-                  </Box>
-                ))}
+            {
+              peers.length !== 0 && <Box>
+                <Typography variant="h6">Pares do Colaborador</Typography>
+                <Card sx={{ mb: 2 }}>
+                  <CardContent>
+                    <Typography variant="h6">{employee.name}</Typography>
+                    <Typography><b>Pares:</b></Typography>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                      {peers.map(peer => (
+                        <Box key={peer.id} sx={{ border: '1px solid #ddd', borderRadius: 2, p: 1, width: '100%' }}>
+                          {peer.name}
+                        </Box>
+                      ))}
+                    </Box>
+                  </CardContent>
+                </Card>
               </Box>
-            </CardContent>
-          </Card>
-        ))}
-      </Box>
+            }
+          </Box>
+        )
+      }
     </Box>)
   );
 }
