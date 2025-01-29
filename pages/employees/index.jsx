@@ -10,14 +10,15 @@ import {
   FormControl,
   InputLabel
 } from '@mui/material';
+import { useRouter } from 'next/router';
 
 export default function Employees() {
   const [companies, setCompanies] = useState([]);
-
   const [employees, setEmployees] = useState([]);
   const [newEmployee, setNewEmployee] = useState({ name: '', email: '', picture: '', companyId: '' });
   const [selectedCompany, setSelectedCompany] = useState('');
-  // const filteredEmployees = employees?.filter(employee => employee.companyId === selectedCompany);
+
+  const router = useRouter()
 
   React.useEffect(() => {
     (async function fetchCompanyAndEmployees() {
@@ -59,10 +60,40 @@ export default function Employees() {
     setEmployees(employeesData)
   }
 
+  const handleAssignLeader = (employeeId, leaderId) => {
+    setEmployees((prevEmployees) =>
+      prevEmployees.map((emp) =>
+        emp.id === employeeId ? { ...emp, leaderId } : emp
+      )
+    );
+  };
+
+  const handlePromoteLeader = async (employeeId, leaderId) => {
+    if (!leaderId) {
+      alert("Por favor, selecione um líder válido.");
+      return;
+    }
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_QULTURE_API_HOST}/api/employees/${leaderId}/promote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ employee_id: employeeId }),
+    });
+
+    if (response.ok) {
+      alert("Líder atribuído com sucesso!");
+      router.reload();
+    } else {
+      alert("Falha ao promover o líder.");
+    }
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, p: 4 }}>
       <Box>
-        <Typography variant="h5" gutterBottom>Cadastrar Colaborador</Typography>
+        <Typography variant="h5" gutterBottom>Cadastro</Typography>
         <TextField
           label="Nome"
           variant="outlined"
@@ -109,7 +140,7 @@ export default function Employees() {
       </Box>
 
       <Box>
-        <Typography variant="h6">Ver Colaboradores</Typography>
+        <Typography variant="h6">Ver Colaboradores por Empresa</Typography>
 
         <FormControl fullWidth sx={{ mt: 4 }}>
           <Select
@@ -129,33 +160,44 @@ export default function Employees() {
 
       {employees.length > 0 ? (
         <Box sx={{ mt: 4 }}>
-          <Typography variant="h6">Funcionários da {companies.find(c => c.id === Number(selectedCompany))?.name}</Typography>
+          <Typography variant="h6">Colaboradores da {companies.find(c => c.id === Number(selectedCompany))?.name}</Typography>
           {employees.map(employee => (
             <Box key={employee.id} sx={{ border: '1px solid #ddd', borderRadius: '8px', p: 2, mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Box>
                 <Typography variant="body1"><strong>Nome:</strong> {employee.name}</Typography>
                 <Typography variant="body1"><strong>Email:</strong> {employee.email}</Typography>
+                {employee.manager_id && (
+                  <Typography variant="body1"><strong>Líder:</strong> {employees.find(e => e.id === employee.manager_id)?.name}</Typography>
+                )}
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <FormControl sx={{ minWidth: 150 }} size="small">
-                  <InputLabel>Selecione um Líder</InputLabel>
-                  <Select
-                    value={employee.leaderId || ''}
-                    onChange={(e) => handleAssignLeader(employee.id, e.target.value)}
+              {!employee.manager_id && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <FormControl sx={{ minWidth: 150 }} size="small">
+                    <InputLabel>Selecione um líder</InputLabel>
+                    <Select
+                      value={employee.leaderId || ''}
+                      onChange={(e) => handleAssignLeader(employee.id, e.target.value)}
+                    >
+                      <MenuItem value="">
+                        <em>Nenhum</em>
+                      </MenuItem>
+                      {employees.filter(e => e.id !== employee.id).map(potentialLeader => (
+                        <MenuItem key={potentialLeader.id} value={potentialLeader.id}>{potentialLeader.name}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <Button
+                    variant="outlined"
+                    onClick={() => handlePromoteLeader(employee.id, employee.leaderId)}
+                    sx={{
+                      color: '#CB90FF',
+                      border: '1px solid #CB90FF'
+                    }}
                   >
-                    <MenuItem value="">
-                      <em>Nenhum</em>
-                    </MenuItem>
-                    {employees.filter(e => e.id !== employee.id).map(potentialLeader => (
-                      <MenuItem key={potentialLeader.id} value={potentialLeader.id}>{potentialLeader.name}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <Button
-                  variant="outlined"
-                  onClick={() => handleAssignLeader(employee.id, employee.leaderId)}
-                >Confirmar Líder</Button>
-              </Box>
+                    Confirmar líder
+                  </Button>
+                </Box>
+              )}
             </Box>
           ))}
         </Box>

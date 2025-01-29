@@ -50,6 +50,13 @@ export default function Company() {
       body: JSON.stringify({ name: newCompanyName }),
     })
 
+    if (response.ok) {
+      alert("Líder atribuído com sucesso!");
+    } else {
+      alert("Falha ao promover o líder.");
+      return
+    }
+
     const data = await response.json()
 
     setNewCompanyName('');
@@ -117,7 +124,7 @@ export default function Company() {
 
                 <Divider sx={{ my: 2 }} />
 
-                <Typography><b>Total de Funcionários:</b> {selectedCompany.total_employees}</Typography>
+                <Typography><b>Total de Colaboradores:</b> {selectedCompany.total_employees}</Typography>
 
                 <Typography><b>Líderes:</b> {selectedCompany.leaders_count}</Typography>
 

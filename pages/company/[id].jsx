@@ -11,7 +11,6 @@ export default function CompanyDetails() {
   const [subordinates, setSubordinates] = React.useState([])
   const [deepSubordinates, setDeepSubordinates] = React.useState([])
 
-
   const router = useRouter()
 
   const { selectedCompany } = React.useContext(CompaniesContext)
@@ -93,7 +92,7 @@ export default function CompanyDetails() {
     (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, p: 4 }}>
       <Typography variant="h5">{selectedCompany.name}</Typography>
       <Box>
-        <Typography><b>Total de Funcionários:</b> {selectedCompany.total_employees}</Typography>
+        <Typography><b>Total de Colaboradores:</b> {selectedCompany.total_employees}</Typography>
         <Typography><b>Líderes:</b> {selectedCompany.leaders_count}</Typography>
         <Typography><b>Liderados:</b> {selectedCompany.followers_count}</Typography>
       </Box>

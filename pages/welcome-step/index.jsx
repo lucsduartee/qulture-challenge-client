@@ -35,7 +35,7 @@ export default function WelcomeStep() {
           }}
           onClick={() => router.push('/company')}
         >
-          Continuar
+          Explorar
         </Button>
 
         <div className={styles.welcomeStepFooter}>

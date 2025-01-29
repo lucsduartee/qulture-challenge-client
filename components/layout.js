@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Image from 'next/image';
+import Link from 'next/link'
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -42,22 +43,24 @@ export default function Layout({ children }) {
   const drawer = (
     <div>
       <Toolbar sx={{ backgroundColor: '#CB90FF', display: 'flex', justifyContent: 'space-around' }}>
-        <Image
-          src="/download.svg"
-          alt="Qulture Rocks Logo"
-          width={60}
-          height={10}
-          priority
-        />
+        <Link href="/welcome-step">
+          <Image
+            src="/download.svg"
+            alt="Qulture Rocks Logo"
+            width={60}
+            height={10}
+            priority
+          />
+        </Link>
       </Toolbar>
       <Divider />
       <List>
-        {['Companhia', 'Colaboradores'].map((text, index) => (
+        {['Empresas', 'Colaboradores'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
               onClick={() => {
                 const path = {
-                  'Companhia': 'company',
+                  'Empresas': 'company',
                   'Colaboradores': 'employees'
                 }[text]
                 router.push(`/${path}`)
