@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Typography, Card, CardContent, List, ListItem, Avatar, Grid } from '@mui/material';
+import { Box, Typography, Card, CardContent, List, ListItem, Avatar, Grid, Button } from '@mui/material';
 import { CompaniesContext } from '@/contexts/company-context';
 import useCompaniesDispatch from '@/hooks/useCompaniesDispatch';
 import { useRouter } from 'next/router';
@@ -38,6 +38,19 @@ export default function CompanyDetails() {
       });
     })();
   }, [router.query.id])
+
+  const handleDeleteEmployee = async (employeeId) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_QULTURE_API_HOST}/api/employees/${employeeId}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      alert('Colaborador deletado com sucesso!');
+      router.reload();
+    } else {
+      alert('Erro ao deletar colaborador.');
+    }
+  };
 
   const getManager = (employeeId) => {
     const employee = employees.find(emp => emp.id === employeeId);
@@ -79,6 +92,14 @@ export default function CompanyDetails() {
                 <CardContent>
                   <Typography variant="h6" align="center">{employee.name}</Typography>
                   <Typography variant="body2" color="textSecondary" align="center">{employee.email}</Typography>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    sx={{ mt: 2 }}
+                    onClick={() => handleDeleteEmployee(employee.id)}
+                  >
+                    Deletar Colaborador
+                  </Button>
                 </CardContent>
               </Card>
             </Grid>
