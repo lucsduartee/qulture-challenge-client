@@ -1,36 +1,57 @@
 import * as React from 'react';
 import { Box, Typography, Card, CardContent, List, ListItem, Avatar, Grid } from '@mui/material';
+import { CompaniesContext } from '@/contexts/company-context';
+import useCompaniesDispatch from '@/hooks/useCompaniesDispatch';
+import { useRouter } from 'next/router';
 
 export default function CompanyDetails() {
-  const employees = [
-    { id: 1, name: 'Alice', email: 'alice@example.com', picture: 'https://via.placeholder.com/150', managerId: 3 },
-    { id: 2, name: 'Bob', email: 'bob@example.com', picture: 'https://via.placeholder.com/150', managerId: 3 },
-    { id: 3, name: 'Charlie (Manager)', email: 'charlie@example.com', picture: 'https://via.placeholder.com/150', managerId: null },
-    { id: 4, name: 'David', email: 'david@example.com', picture: 'https://via.placeholder.com/150', managerId: 1 },
-    { id: 5, name: 'Eve', email: 'eve@example.com', picture: 'https://via.placeholder.com/150', managerId: 1 },
-    { id: 6, name: 'Frank', email: 'frank@example.com', picture: 'https://via.placeholder.com/150', managerId: 2 },
-    { id: 7, name: 'Grace', email: 'grace@example.com', picture: 'https://via.placeholder.com/150', managerId: 2 },
-    { id: 8, name: 'Grace 2', email: 'grace@example.com', picture: 'https://via.placeholder.com/150', managerId: 2 },
-    { id: 9, name: 'Helen', email: 'helen@example.com', picture: 'https://via.placeholder.com/150', managerId: 4 },
-    { id: 10, name: 'Ian', email: 'ian@example.com', picture: 'https://via.placeholder.com/150', managerId: 4 },
-    { id: 11, name: 'Jack', email: 'jack@example.com', picture: 'https://via.placeholder.com/150', managerId: 5 },
-    { id: 12, name: 'Karen', email: 'karen@example.com', picture: 'https://via.placeholder.com/150', managerId: 5 },
-    { id: 13, name: 'Leo', email: 'leo@example.com', picture: 'https://via.placeholder.com/150', managerId: 6 },
-  ];
+  const [employees, setEmployees] = React.useState([])
+  const router = useRouter()
 
+  const { selectedCompany } = React.useContext(CompaniesContext)
+  const companiesDispatch = useCompaniesDispatch()
+
+  React.useEffect(() => {
+    if (!router.query.id) return
+
+    (async function fetchCompanyAndEmployees() {
+      const companyId = router.query.id;
+
+      const [companyResponse, employeesResponse] = await Promise.all([
+        fetch(`${process.env.NEXT_PUBLIC_QULTURE_API_HOST}/api/companies/${companyId}`, {
+          method: 'GET',
+        }),
+        fetch(`${process.env.NEXT_PUBLIC_QULTURE_API_HOST}/api/companies/${companyId}/employees`, {
+          method: 'GET',
+        })
+      ]);
+
+      const companyData = await companyResponse.json();
+      const employeesData = await employeesResponse.json();
+      setEmployees(employeesData)
+
+      companiesDispatch({
+        type: 'selected',
+        data: {
+          company: companyData,
+        }
+      });
+    })();
+  }, [router.query.id])
 
   const getManager = (employeeId) => {
     const employee = employees.find(emp => emp.id === employeeId);
-    return employees.find(emp => emp.id === employee?.managerId) || null;
+    return employees.find(emp => emp.id === employee?.manager_id) || null;
   };
 
   const getPeers = (employeeId) => {
     const manager = getManager(employeeId);
-    return employees.filter(emp => emp.managerId === manager?.id && emp.id !== employeeId);
+    return employees.filter(emp => emp.manager_id === manager?.id && emp.id !== employeeId);
   };
 
   const getDirectReports = (employeeId) => {
-    return employees.filter(emp => emp.managerId === employeeId);
+    console.log('getDirectReports', employeeId)
+    return employees.filter(emp => emp.manager_id === employeeId);
   };
 
   const getSecondLevelReports = (employeeId) => {
@@ -39,19 +60,17 @@ export default function CompanyDetails() {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, p: 4 }}>
-      <Typography variant="h5" gutterBottom>Empresa 1</Typography>
+    selectedCompany &&
+    (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, p: 4 }}>
+      <Typography variant="h5">{selectedCompany.name}</Typography>
       <Box>
-        <Typography>
-          <b>Quantidade de colaboradores:</b> {employees.length}
-        </Typography>
-        <Typography>
-          <b>Quantidade de líderes:</b> {employees.filter(emp => emp.managerId === null).length}
-        </Typography>
+        <Typography><b>Total de Funcionários:</b> {selectedCompany.total_employees}</Typography>
+        <Typography><b>Líderes:</b> {selectedCompany.leaders_count}</Typography>
+        <Typography><b>Liderados:</b> {selectedCompany.followers_count}</Typography>
       </Box>
 
       <Box>
-        <Typography variant="h6" gutterBottom>Lista de Colaboradores</Typography>
+        <Typography variant="h6">Lista de Colaboradores</Typography>
         <Grid container spacing={2}>
           {employees.map(employee => (
             <Grid item xs={12} sm={6} md={4} key={employee.id}>
@@ -69,7 +88,7 @@ export default function CompanyDetails() {
 
       <Box>
         <Typography variant="h6" gutterBottom>Líderes</Typography>
-        {employees.filter(emp => emp.managerId === null).map(manager => (
+        {employees.filter(emp => emp.manager_id === null).map(manager => (
           <Card key={manager.id} sx={{ mb: 2 }}>
             <CardContent>
               <Typography variant="h6">{manager.name}</Typography>
@@ -100,7 +119,7 @@ export default function CompanyDetails() {
       </Box>
 
       <Box>
-        <Typography variant="h6" gutterBottom>Pares de Colaboradores</Typography>
+        <Typography variant="h6">Pares de Colaboradores</Typography>
         {employees.filter(emp => getPeers(emp.id).length > 0).map(emp => (
           <Card key={emp.id} sx={{ mb: 2 }}>
             <CardContent>
@@ -117,6 +136,6 @@ export default function CompanyDetails() {
           </Card>
         ))}
       </Box>
-    </Box>
+    </Box>)
   );
 }

@@ -2,24 +2,65 @@ import * as React from 'react';
 import { useState } from 'react';
 import { Box, Button, TextField, Typography, List, ListItem, Divider, Card, CardContent } from '@mui/material';
 import { useRouter } from 'next/router';
+import { CompaniesContext } from '@/contexts/company-context';
+import useCompaniesDispatch from '@/hooks/useCompaniesDispatch';
 
 export default function Company() {
-  const [companies, setCompanies] = useState([
-    { id: 1, name: 'Company 1', totalEmployees: 100, leaders: 10, followers: 90 },
-    { id: 2, name: 'Company 2', totalEmployees: 50, leaders: 5, followers: 45 },
-    { id: 3, name: 'Company 3', totalEmployees: 200, leaders: 20, followers: 180 }
-  ]);
   const [newCompanyName, setNewCompanyName] = useState('');
-  const [selectedCompany, setSelectedCompany] = useState(null);
-
   const router = useRouter()
 
-  const handleAddCompany = () => {
-    if (newCompanyName.trim() === '') return;
-    const newCompany = { id: companies.length + 1, name: newCompanyName };
-    setCompanies([...companies, newCompany]);
+  const { companies, selectedCompany } = React.useContext(CompaniesContext)
+  const companiesDispatch = useCompaniesDispatch()
+
+  React.useEffect(() => {
+    (async function fetchCompanies() {
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_QULTURE_API_HOST}/api/companies`, {
+        method: 'GET',
+      })
+
+      const data = await response.json()
+      
+      companiesDispatch({
+        type: 'charged',
+        data: {
+          companies: data,
+        }
+      })
+    })()
+  }, [])
+
+  const handleSelectedCompany = (company) => {
+    companiesDispatch({
+      type: 'selected',
+      data: {
+        company
+      },
+    })
+  }
+
+  async function submit() {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_QULTURE_API_HOST}/api/companies`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name: newCompanyName }),
+    })
+
+    const data = await response.json()
+
     setNewCompanyName('');
-  };
+    companiesDispatch({
+      type: 'created',
+      data: {
+        company: data,
+      },
+    })
+
+  }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, p: 4 }}>
@@ -35,7 +76,7 @@ export default function Company() {
         />
         <Button
           variant="contained"
-          onClick={handleAddCompany}
+          onClick={submit}
           sx={{
             backgroundColor: '#CB90FF',
             fontWeight: '600'
@@ -48,13 +89,13 @@ export default function Company() {
       <Divider />
 
       <Box>
-        <Typography variant="h5" gutterBottom>Lista de Empresas</Typography>
+        <Typography variant="h5">Lista de Empresas</Typography>
         <List>
           {companies.map((company) => (
             <ListItem
               key={company.id}
               button
-              onClick={() => setSelectedCompany(company)}
+              onClick={() => handleSelectedCompany(company)}
               sx={{ mb: 1, border: '1px solid #ddd', borderRadius: 2 }}
             >
               {company.name}
@@ -69,7 +110,7 @@ export default function Company() {
           <Divider />
 
           <Box>
-            <Typography variant="h5" gutterBottom>Detalhes da Empresa</Typography>
+            <Typography variant="h5">Detalhes da Empresa</Typography>
             <Card>
               <CardContent>
                 <Typography variant="h6"><b>Nome</b></Typography>
@@ -77,11 +118,11 @@ export default function Company() {
 
                 <Divider sx={{ my: 2 }} />
 
-                <Typography><b>Total de Funcionários:</b> {selectedCompany.totalEmployees}</Typography>
+                <Typography><b>Total de Funcionários:</b> {selectedCompany.total_employees}</Typography>
 
-                <Typography><b>Líderes:</b> {selectedCompany.leaders}</Typography>
+                <Typography><b>Líderes:</b> {selectedCompany.leaders_count}</Typography>
 
-                <Typography><b>Liderados:</b> {selectedCompany.followers}</Typography>
+                <Typography><b>Liderados:</b> {selectedCompany.followers_count}</Typography>
 
                 <Button
                   variant="contained"
