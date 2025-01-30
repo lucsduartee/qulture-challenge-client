@@ -48,6 +48,7 @@ export default function Employees() {
 
     if (response.ok) {
       alert("Colaborador criado com sucesso!");
+      router.reload();
     } else {
       alert("Falha ao criar colaborador.");
       return
