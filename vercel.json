@@ -1,5 +1,5 @@
 {
-  "build": {
-    "ignore": ["**/__tests__/**"]
+  "function": {
+    "excludeFiles": ["**/__tests__/**"]
   }
 }
