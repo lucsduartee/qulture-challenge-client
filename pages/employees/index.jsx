@@ -119,8 +119,9 @@ export default function Employees() {
           sx={{ mb: 2 }}
         />
         <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel>Empresa</InputLabel>
+          <InputLabel id="company-label">Empresa</InputLabel>
           <Select
+            labelId="company-label"
             value={newEmployee.companyId}
             onChange={(e) => setNewEmployee({ ...newEmployee, companyId: e.target.value })}
           >
