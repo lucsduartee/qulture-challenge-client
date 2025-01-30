@@ -1,0 +1,162 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WelcomeStep Component matches snapshot 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <section
+        class="welcomeStepContainer MuiBox-root css-0"
+      >
+        <div
+          class="welcomeStepMain MuiBox-root css-0"
+        >
+          <img
+            alt="Qulture Rocks Logo"
+            class="welcomeStepImage"
+            data-nimg="1"
+            decoding="async"
+            height="38"
+            src="/LOGO.svg"
+            style="color: transparent;"
+            width="300"
+          />
+          <h1
+            class="welcomeStepTitle"
+          >
+            Bem Vindo!
+          </h1>
+          <p
+            class="welcomeStepContent"
+          >
+            Este é um projeto para gerenciamento organizacional de uma empresa. Com ele você pode adicionar colaboradores, gerenciar promoções e ter um overview de sua Organização!
+          </p>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-5kl8be-MuiButtonBase-root-MuiButton-root"
+            id=":r0:"
+            tabindex="0"
+            type="button"
+          >
+            Explorar
+          </button>
+          <div
+            class="welcomeStepFooter"
+          >
+            © 2025 - 
+            <b>
+              Lucas Duarte
+            </b>
+             em um challenge com a 
+            <b>
+              Qulture
+            </b>
+             🤘🏽
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>,
+  "container": <div>
+    <section
+      class="welcomeStepContainer MuiBox-root css-0"
+    >
+      <div
+        class="welcomeStepMain MuiBox-root css-0"
+      >
+        <img
+          alt="Qulture Rocks Logo"
+          class="welcomeStepImage"
+          data-nimg="1"
+          decoding="async"
+          height="38"
+          src="/LOGO.svg"
+          style="color: transparent;"
+          width="300"
+        />
+        <h1
+          class="welcomeStepTitle"
+        >
+          Bem Vindo!
+        </h1>
+        <p
+          class="welcomeStepContent"
+        >
+          Este é um projeto para gerenciamento organizacional de uma empresa. Com ele você pode adicionar colaboradores, gerenciar promoções e ter um overview de sua Organização!
+        </p>
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-5kl8be-MuiButtonBase-root-MuiButton-root"
+          id=":r0:"
+          tabindex="0"
+          type="button"
+        >
+          Explorar
+        </button>
+        <div
+          class="welcomeStepFooter"
+        >
+          © 2025 - 
+          <b>
+            Lucas Duarte
+          </b>
+           em um challenge com a 
+          <b>
+            Qulture
+          </b>
+           🤘🏽
+        </div>
+      </div>
+    </section>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
