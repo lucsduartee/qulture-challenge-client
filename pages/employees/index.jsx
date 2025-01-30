@@ -33,7 +33,7 @@ export default function Employees() {
   }, [])
 
   const handleAddEmployee = async () => {
-    await fetch(
+    const response = await fetch(
       `${process.env.NEXT_PUBLIC_QULTURE_API_HOST}/api/companies/${newEmployee.companyId}/employees`, {
       method: 'POST',
       headers: {
