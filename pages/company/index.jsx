@@ -53,7 +53,7 @@ export default function Company() {
     if (response.ok) {
       alert("Empresa criada com sucesso!");
     } else {
-      alert("Falha ao promover o líder.");
+      alert("Falha ao criar empresa.");
       return
     }
 

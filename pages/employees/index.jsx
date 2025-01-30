@@ -46,6 +46,13 @@ export default function Employees() {
       }),
     })
 
+    if (response.ok) {
+      alert("Colaborador criado com sucesso!");
+    } else {
+      alert("Falha ao criar colaborador.");
+      return
+    }
+
     setNewEmployee({ name: '', email: '', picture: '', companyId: '' });
   };
 
