@@ -1,5 +1,5 @@
 {
-  "function": {
+  "functions": {
     "excludeFiles": ["**/__tests__/**"]
   }
 }
