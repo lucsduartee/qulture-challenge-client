@@ -51,7 +51,7 @@ export default function Company() {
     })
 
     if (response.ok) {
-      alert("Líder atribuído com sucesso!");
+      alert("Empresa criada com sucesso!");
     } else {
       alert("Falha ao promover o líder.");
       return
